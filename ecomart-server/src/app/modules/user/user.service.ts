@@ -1,10 +1,10 @@
-import bcrypt from "bcrypt";
-import { IUser } from "./user.interface";
-import User from "./user.model";
-import mongoose from "mongoose";
+import bcrypt from 'bcrypt';
+import { IUser } from './user.interface';
+import User from './user.model';
+import mongoose from 'mongoose';
 
 const createAdmin = async (payload: IUser): Promise<IUser> => {
-  payload.role = "admin";
+  payload.role = 'admin';
   const result = await User.create(payload);
 
   return result;
@@ -19,7 +19,7 @@ const getSingleUser = async (id: string) => {
   const user = await User.findById(id);
 
   if (!user) {
-    throw new Error("User not found");
+    throw new Error('User not found');
   }
 
   return user;
@@ -34,25 +34,25 @@ const updateUser = async (id: string, data: IUser) => {
 
 const updatePassword = async (
   userId: string,
-  payload: { currentPassword: string; newPassword: string }
+  payload: { currentPassword: string; newPassword: string },
 ) => {
-  const user = await User.findById(userId).select("+password");
+  const user = await User.findById(userId).select('+password');
 
   if (!user) {
-    throw new Error("User not found");
+    throw new Error('User not found');
   }
 
   const isPasswordMatched = await bcrypt.compare(
     payload.currentPassword,
-    user.password
+    user.password,
   );
 
   if (!isPasswordMatched) {
-    throw new Error("Current password is incorrect");
+    throw new Error('Current password is incorrect');
   }
 
   if (payload.currentPassword === payload.newPassword) {
-    throw new Error("New password cannot be same as current password");
+    throw new Error('New password cannot be same as current password');
   }
 
   const hashedNewPassword = await bcrypt.hash(payload.newPassword, 10);
@@ -60,11 +60,11 @@ const updatePassword = async (
   const updatedUser = await User.findByIdAndUpdate(
     userId,
     { password: hashedNewPassword },
-    { new: true }
-  ).select("-password");
+    { new: true },
+  ).select('-password');
 
   if (!updatedUser) {
-    throw new Error("Failed to update password");
+    throw new Error('Failed to update password');
   }
 
   return updatedUser;
@@ -79,15 +79,24 @@ const activationUser = async (id: string) => {
   const user = await User.findById(id);
 
   if (!user) {
-    throw new Error("User not found");
+    throw new Error('User not found');
   }
   const result = await User.findByIdAndUpdate(
     id,
     { isActive: !user.isActive },
-    { new: true }
+    { new: true },
   );
 
   return result;
+};
+const changeUserRole = async (id: string, role: 'admin' | 'customer') => {
+  const validRoles = ['admin', 'customer'];
+  if (!validRoles.includes(role)) {
+    throw new Error('Invalid role provided.');
+  }
+
+  const user = await User.findByIdAndUpdate(id, { role }, { new: true });
+  return user;
 };
 export const userService = {
   createAdmin,
@@ -97,4 +106,5 @@ export const userService = {
   deleteUser,
   activationUser,
   updatePassword,
+  changeUserRole,
 };

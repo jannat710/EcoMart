@@ -109,6 +109,18 @@ const activationUser = async (req: Request, res: Response) => {
     data: result,
   });
 };
+const changeUserRole = catchAsync(async (req: Request, res: Response) => {
+  const userId = req.params.userId;
+  const { role } = req.body;
+
+  const result = await userService.changeUserRole(userId, role);
+
+  sendResponse(res, {
+    statusCode: StatusCodes.OK,
+    message: 'User role updated successfully',
+    data: result,
+  });
+});
 
 export const userController = {
   createAdmin,
@@ -118,4 +130,5 @@ export const userController = {
   deleteUser,
   activationUser,
   updatePassword,
+  changeUserRole,
 };
