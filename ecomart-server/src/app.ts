@@ -15,7 +15,7 @@ app.use(
     origin: [
       'http://localhost:5173',
       'http://localhost:5174',
-      'http://localhost:5175',
+      'https://ecomart-server.vercel.app',
       'http://localhost:3000',
     ],
     credentials: true,
