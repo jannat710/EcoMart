@@ -6,6 +6,7 @@ import userRouter from './app/modules/user/user.router';
 import productRouter from './app/modules/product/product.router';
 import { globalErrorHandler } from './app/middleeatres/globalErrorHandler';
 import orderRouter from './app/modules/order/order.router';
+import pricingRouter from './app/modules/pricing/pricing.router';
 
 const app: Application = express();
 //  CORS setup
@@ -32,7 +33,7 @@ app.get('/', getAController);
 app.use('/api/auth', authRouter);
 app.use('/api/user', userRouter);
 app.use('/api', productRouter);
-
+app.use('/api/pricings', pricingRouter);
 app.use('/api/order', orderRouter);
 app.use(globalErrorHandler);
 
