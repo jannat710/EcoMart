@@ -51,7 +51,7 @@ const Navbar = () => {
       setIsLoading(false);
     };
     fetchUser();
-  }, []);
+  }, [setIsLoading, setUser]);
 
   const links = [
     { name: "Home", path: "/" },
