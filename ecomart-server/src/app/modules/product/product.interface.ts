@@ -1,7 +1,8 @@
 export interface IProduct {
   name: string;
   brand: string;
-  image?: string;
+  // image?: string;
+  images?: string[];
   price: number;
   category:
     | 'Grocery'
@@ -13,6 +14,8 @@ export interface IProduct {
   description: string;
   quantity: number;
   inStock: boolean;
+  rating?: number;
+  totalReviews?: number;
   createdAt?: Date;
   updatedAt?: Date;
 }

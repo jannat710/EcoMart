@@ -11,7 +11,14 @@ const productSchema = new Schema<IProduct>(
       type: String,
       required: true,
     },
-    image: { type: String },
+    images: {
+      type: [String],
+      required: true,
+      validate: {
+        validator: (val: string[]) => val.length > 0,
+        message: 'At least one image is required',
+      },
+    },
     price: {
       type: Number,
       required: true,
@@ -45,6 +52,16 @@ const productSchema = new Schema<IProduct>(
       type: Boolean,
       default: true,
       required: true,
+    },
+    rating: {
+      type: Number,
+      required: true,
+      min: 0,
+    },
+    totalReviews: {
+      type: Number,
+      required: true,
+      min: 0,
     },
   },
   {
