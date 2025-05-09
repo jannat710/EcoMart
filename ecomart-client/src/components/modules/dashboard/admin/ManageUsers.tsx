@@ -39,7 +39,6 @@ const ManageUsers = ({ users }: ManageUsersProps) => {
   const handleToggle = async (userId: string) => {
     try {
       await updateUserActiveStatus(userId);
-
       setUserList((prev) =>
         prev.map((user) =>
           user._id === userId ? { ...user, isActive: !user.isActive } : user
@@ -50,7 +49,10 @@ const ManageUsers = ({ users }: ManageUsersProps) => {
     }
   };
 
-  const handleRoleChange = async (userId: string, newRole: string) => {
+  const handleRoleChange = async (
+    userId: string,
+    newRole: "admin" | "customer"
+  ) => {
     try {
       const updatedUser = await updateUserRole(userId, newRole);
       setUserList((prev) =>
@@ -64,7 +66,7 @@ const ManageUsers = ({ users }: ManageUsersProps) => {
   };
 
   return (
-    <div className="p-4 md:p-6 rounded-xl bg-emerald-100">
+    <div className="p-4 md:p-6 rounded-x">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
         <h3 className="text-2xl font-bold">Manage Users</h3>
       </div>
@@ -76,7 +78,6 @@ const ManageUsers = ({ users }: ManageUsersProps) => {
               <TableHead>#</TableHead>
               <TableHead>Name</TableHead>
               <TableHead>Email</TableHead>
-              <TableHead>Phone</TableHead>
               <TableHead>Change Role</TableHead>
               <TableHead>Role</TableHead>
               <TableHead>Actions</TableHead>
@@ -90,12 +91,14 @@ const ManageUsers = ({ users }: ManageUsersProps) => {
                 </TableCell>
                 <TableCell>{user.name}</TableCell>
                 <TableCell>{user.email}</TableCell>
-                <TableCell>{user.phoneNumber}</TableCell>
                 <TableCell>
                   <Select
                     value={user.role}
                     onValueChange={(newRole) =>
-                      handleRoleChange(user._id!, newRole)
+                      handleRoleChange(
+                        user._id!,
+                        newRole as "admin" | "customer"
+                      )
                     }
                   >
                     <SelectTrigger className="p-1 rounded-md text-sm">
@@ -103,8 +106,7 @@ const ManageUsers = ({ users }: ManageUsersProps) => {
                     </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="admin">Admin</SelectItem>
-                      <SelectItem value="landlord">Landlord</SelectItem>
-                      <SelectItem value="tenant">Tenant</SelectItem>
+                      <SelectItem value="customer">Customer</SelectItem>
                     </SelectContent>
                   </Select>
                 </TableCell>
@@ -113,7 +115,7 @@ const ManageUsers = ({ users }: ManageUsersProps) => {
                   <Button
                     onClick={() => handleToggle(user._id!)}
                     className={`px-2 py-1 text-white text-sm ${
-                      user.isActive ? "bg-emerald-700" : "bg-red-700"
+                      user.isActive ? "" : "bg-red-700"
                     }`}
                   >
                     {user.isActive ? "Active" : "Blocked"}
@@ -142,9 +144,7 @@ const ManageUsers = ({ users }: ManageUsersProps) => {
                 variant={currentPage === pageNum ? "default" : "outline"}
                 onClick={() => setCurrentPage(pageNum)}
                 className={`w-10 p-0 ${
-                  currentPage === pageNum
-                    ? "bg-emerald-600 text-white hover:bg-emerald-700"
-                    : ""
+                  currentPage === pageNum ? " text-white " : ""
                 }`}
               >
                 {pageNum}

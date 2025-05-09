@@ -5,6 +5,7 @@ import {
   House,
   Loader,
   PackageCheck,
+  ShoppingBag,
   SquareTerminal,
   User,
 } from "lucide-react";
@@ -49,7 +50,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
             {
               title: "Product Management",
               url: "/admin/allProducts",
-              icon: House,
+              icon: ShoppingBag,
             },
             {
               title: "Manage Orders",

@@ -5,7 +5,7 @@ import { FieldValues } from "react-hook-form";
 import { revalidateTag } from "next/cache";
 
 interface IApiResponse {
-  success: boolean;
+  status: boolean;
   data?: any;
   message?: string;
 }
@@ -35,7 +35,7 @@ export const createProducts = async (
     return result;
   } catch (error: any) {
     return {
-      success: false,
+      status: false,
       message: error?.message || "Something went wrong",
     };
   }
@@ -75,22 +75,46 @@ export const getSingleProduct = async (id: string): Promise<any> => {
   }
 };
 
+// export const deleteProduct = async (id: string): Promise<IApiResponse> => {
+//   try {
+//     const res = await fetch(`${BASE_URL}/products/${id}`, {
+//       method: "DELETE",
+//     });
+
+//     if (!res.ok) {
+//       throw new Error("Failed to delete product");
+//     }
+
+//     const result = await res.json();
+//     revalidateTag("PRODUCT");
+//     return result;
+//   } catch (error: any) {
+//     return {
+//       status: false,
+//       message: error?.message || "Something went wrong",
+//     };
+//   }
+// };
 export const deleteProduct = async (id: string): Promise<IApiResponse> => {
   try {
+    console.log("Sending DELETE request to", `${BASE_URL}/products/${id}`);
     const res = await fetch(`${BASE_URL}/products/${id}`, {
       method: "DELETE",
     });
 
-    if (!res.ok) {
-      throw new Error("Failed to delete product");
-    }
+    console.log("Delete status:", res.status);
 
     const result = await res.json();
+    console.log("Delete result:", result);
+
     revalidateTag("PRODUCT");
+
     return result;
   } catch (error: any) {
+    console.error("Delete error:", error);
+
     return {
-      success: false,
+      status: false,
       message: error?.message || "Something went wrong",
     };
   }
@@ -120,7 +144,7 @@ export const updateProduct = async (
     return result;
   } catch (error: any) {
     return {
-      success: false,
+      status: false,
       message: error?.message || "Something went wrong",
     };
   }

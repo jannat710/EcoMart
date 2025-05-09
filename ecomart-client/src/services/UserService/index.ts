@@ -5,10 +5,10 @@ import { IUser } from "@/types";
 import { revalidateTag } from "next/cache";
 import { cookies } from "next/headers";
 
-// Get all users (Admin only)
+// Get all users
 export const getAllUsers = async () => {
   try {
-    const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_API}/users`, {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_API}/user`, {
       next: {
         tags: ["USERS"],
       },
@@ -21,36 +21,10 @@ export const getAllUsers = async () => {
   }
 };
 
-// Get single user (Authenticated)
-// export const getSingleUser = async (userId: string) => {
-//   try {
-//     const res = await fetch(
-//       `${process.env.NEXT_PUBLIC_BASE_API}/users/${userId}`,
-//       {
-//         headers: {
-//           Authorization: (await cookies()).get("accessToken")?.value || "",
-//         },
-//         cache: "no-store",
-//         next: {
-//           tags: ["USER"],
-//         },
-//       }
-//     );
-
-//     if (!res.ok) {
-//       const error = await res.json();
-//       throw new Error(error.message || "Failed to fetch user");
-//     }
-
-//     const result = await res.json();
-//     return result.data;
-//   } catch (error: any) {
-//     throw new Error(error.message || "Failed to fetch user");
-//   }
-// };
+// Get single user
 export const getSingleUser = async () => {
   try {
-    const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_API}/users`, {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_API}/user`, {
       headers: {
         Authorization: (await cookies()).get("accessToken")?.value || "",
       },
@@ -71,7 +45,7 @@ export const getSingleUser = async () => {
 export const updateUserActiveStatus = async (userId: string) => {
   try {
     const res = await fetch(
-      `${process.env.NEXT_PUBLIC_BASE_API}/users/activation/${userId}`,
+      `${process.env.NEXT_PUBLIC_BASE_API}/user/activation/${userId}`,
       {
         method: "PATCH",
       }
@@ -92,7 +66,7 @@ export const updateUserRole = async (
 ) => {
   try {
     const res = await fetch(
-      `${process.env.NEXT_PUBLIC_BASE_API}/users/change-role/${userId}`,
+      `${process.env.NEXT_PUBLIC_BASE_API}/user/change-role/${userId}`,
       {
         method: "PATCH",
         headers: {
@@ -122,17 +96,14 @@ export const updateProfile = async (
   formData: Pick<IUser, "name" | "email">
 ) => {
   try {
-    const res = await fetch(
-      `${process.env.NEXT_PUBLIC_BASE_API}/users/update/${id}`,
-      {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(formData),
-        cache: "no-store",
-      }
-    );
+    const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_API}/user/${id}`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(formData),
+      cache: "no-store",
+    });
 
     if (!res.ok) {
       const error = await res.json();
@@ -164,7 +135,7 @@ export const updatePassword = async (
 
   try {
     const res = await fetch(
-      `${process.env.NEXT_PUBLIC_BASE_API}/users/update-password/${id}`,
+      `${process.env.NEXT_PUBLIC_BASE_API}/user/update-password/${id}`,
       {
         method: "PATCH",
         headers: {
