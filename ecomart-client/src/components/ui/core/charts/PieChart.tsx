@@ -1,18 +1,10 @@
-'use client';
+/* eslint-disable @typescript-eslint/no-explicit-any */
+"use client";
 
-import {
-  Chart as ChartJS,
-  ArcElement,
-  Tooltip,
-  Legend,
-} from 'chart.js';
-import { Pie } from 'react-chartjs-2';
+import { Chart as ChartJS, ArcElement, Tooltip, Legend } from "chart.js";
+import { Pie } from "react-chartjs-2";
 
-ChartJS.register(
-  ArcElement,
-  Tooltip,
-  Legend
-);
+ChartJS.register(ArcElement, Tooltip, Legend);
 
 export const PieChart = ({ data }: { data: any }) => {
   const options = {
@@ -20,7 +12,7 @@ export const PieChart = ({ data }: { data: any }) => {
     maintainAspectRatio: false,
     plugins: {
       legend: {
-        position: 'right' as const,
+        position: "right" as const,
       },
     },
   };
