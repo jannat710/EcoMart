@@ -1,6 +1,5 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
-
+export const dynamic = "force-dynamic";
 import { Check, X, Loader, Star } from "lucide-react";
 import { useParams } from "next/navigation";
 import { useEffect, useState, useCallback } from "react";
@@ -17,9 +16,15 @@ import { Badge } from "@/components/ui/badge";
 import Link from "next/link";
 
 const ProductDetailsPage = () => {
+  const params = useParams<{ id: string }>();
+  const id = params.id;
   const { user } = useUser();
-  console.log(user);
-  const { id } = useParams();
+  useEffect(() => {
+    if (user) {
+      console.log(user);
+    }
+  }, [user]);
+  //console.log(user);
   const [productDetails, setProductDetails] = useState<IProduct | null>(null);
   const [relatedProducts, setRelatedProducts] = useState<IProduct[]>([]);
   const [loading, setLoading] = useState(true);

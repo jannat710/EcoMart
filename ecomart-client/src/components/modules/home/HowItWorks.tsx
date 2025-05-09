@@ -5,7 +5,7 @@ const features = [
   {
     title: "Browse Our Products",
     desc: "Explore our wide range of fresh veggies, healthy meals, and tasty crops to suit your needs.",
-    icon: Search, // Use directly imported icon
+    icon: Search,
   },
   {
     title: "Add to Cart",

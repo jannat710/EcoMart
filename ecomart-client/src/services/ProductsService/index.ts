@@ -1,11 +1,22 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use server";
+
 import { FieldValues } from "react-hook-form";
 import { revalidateTag } from "next/cache";
 
-export const createProducts = async (productData: FieldValues) => {
+interface IApiResponse {
+  success: boolean;
+  data?: any;
+  message?: string;
+}
+
+const BASE_URL = process.env.NEXT_PUBLIC_BASE_API;
+
+export const createProducts = async (
+  productData: FieldValues
+): Promise<IApiResponse> => {
   try {
-    const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_API}/products`, {
+    const res = await fetch(`${BASE_URL}/products`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -13,74 +24,94 @@ export const createProducts = async (productData: FieldValues) => {
       body: JSON.stringify(productData),
     });
 
+    if (!res.ok) {
+      throw new Error("Failed to create product");
+    }
+
     const result = await res.json();
 
     revalidateTag("PRODUCT");
 
     return result;
   } catch (error: any) {
-    return Error(error);
+    return {
+      success: false,
+      message: error?.message || "Something went wrong",
+    };
   }
 };
 
-export const getAllProducts = async () => {
+export const getAllProducts = async (): Promise<any[]> => {
   try {
-    const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_API}/products`, {
+    const res = await fetch(`${BASE_URL}/products`, {
       cache: "no-store",
     });
 
-    const result = await res.json();
-    return result.data;
-  } catch (error: any) {
-    return Error(error);
-  }
-};
-export const getSingleProduct = async (id: string) => {
-  try {
-    const res = await fetch(
-      `${process.env.NEXT_PUBLIC_BASE_API}/products/${id}`,
-      {
-        cache: "no-store",
-      }
-    );
+    if (!res.ok) {
+      throw new Error("Failed to fetch products");
+    }
 
     const result = await res.json();
     return result.data;
   } catch (error: any) {
-    return Error(error);
+    throw new Error(error?.message || "Something went wrong");
   }
 };
-export const deleteProduct = async (id: string) => {
+
+export const getSingleProduct = async (id: string): Promise<any> => {
   try {
-    const res = await fetch(
-      `${process.env.NEXT_PUBLIC_BASE_API}/products/${id}`,
-      {
-        method: "DELETE",
-      }
-    );
+    const res = await fetch(`${BASE_URL}/products/${id}`, {
+      cache: "no-store",
+    });
+
+    if (!res.ok) {
+      throw new Error("Failed to fetch single product");
+    }
+
+    const result = await res.json();
+    return result.data;
+  } catch (error: any) {
+    throw new Error(error?.message || "Something went wrong");
+  }
+};
+
+export const deleteProduct = async (id: string): Promise<IApiResponse> => {
+  try {
+    const res = await fetch(`${BASE_URL}/products/${id}`, {
+      method: "DELETE",
+    });
+
+    if (!res.ok) {
+      throw new Error("Failed to delete product");
+    }
 
     const result = await res.json();
     revalidateTag("PRODUCT");
     return result;
   } catch (error: any) {
-    return Error(error);
+    return {
+      success: false,
+      message: error?.message || "Something went wrong",
+    };
   }
 };
+
 export const updateProduct = async (
   id: string,
   updateProductData: FieldValues
-) => {
+): Promise<IApiResponse> => {
   try {
-    const res = await fetch(
-      `${process.env.NEXT_PUBLIC_BASE_API}/products/${id}`,
-      {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(updateProductData),
-      }
-    );
+    const res = await fetch(`${BASE_URL}/products/${id}`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(updateProductData),
+    });
+
+    if (!res.ok) {
+      throw new Error("Failed to update product");
+    }
 
     const result = await res.json();
 
@@ -88,6 +119,9 @@ export const updateProduct = async (
 
     return result;
   } catch (error: any) {
-    return Error(error);
+    return {
+      success: false,
+      message: error?.message || "Something went wrong",
+    };
   }
 };

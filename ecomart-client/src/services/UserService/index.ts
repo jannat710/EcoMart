@@ -22,9 +22,35 @@ export const getAllUsers = async () => {
 };
 
 // Get single user (Authenticated)
-export const getSingleUser = async (id: string) => {
+// export const getSingleUser = async (userId: string) => {
+//   try {
+//     const res = await fetch(
+//       `${process.env.NEXT_PUBLIC_BASE_API}/users/${userId}`,
+//       {
+//         headers: {
+//           Authorization: (await cookies()).get("accessToken")?.value || "",
+//         },
+//         cache: "no-store",
+//         next: {
+//           tags: ["USER"],
+//         },
+//       }
+//     );
+
+//     if (!res.ok) {
+//       const error = await res.json();
+//       throw new Error(error.message || "Failed to fetch user");
+//     }
+
+//     const result = await res.json();
+//     return result.data;
+//   } catch (error: any) {
+//     throw new Error(error.message || "Failed to fetch user");
+//   }
+// };
+export const getSingleUser = async () => {
   try {
-    const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_API}/users/${id}`, {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_API}/users`, {
       headers: {
         Authorization: (await cookies()).get("accessToken")?.value || "",
       },
@@ -34,15 +60,10 @@ export const getSingleUser = async (id: string) => {
       },
     });
 
-    if (!res.ok) {
-      const error = await res.json();
-      throw new Error(error.message || "Failed to fetch user");
-    }
-
     const result = await res.json();
     return result.data;
   } catch (error: any) {
-    throw new Error(error.message || "Failed to fetch user");
+    return Error(error);
   }
 };
 
