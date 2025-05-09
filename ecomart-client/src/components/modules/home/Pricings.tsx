@@ -1,10 +1,10 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 "use client";
 
 import React, { useEffect, useState } from "react";
 import useEmblaCarousel from "embla-carousel-react";
 import { EmblaOptionsType } from "embla-carousel";
 import { LoaderCircle } from "lucide-react";
+import SectionTitle from "@/components/ui/core/SectionTitle";
 
 interface PricingPlan {
   title: string;
@@ -22,19 +22,21 @@ const Pricings: React.FC = () => {
   const [emblaRef, emblaApi] = useEmblaCarousel(OPTIONS);
 
   useEffect(() => {
-    fetch(`${process.env.NEXT_PUBLIC_BASE_API}/pricings`)
-      .then((res) => res.json())
-      .then((data) => {
-        if (Array.isArray(data)) {
-          setData(data);
-        } else {
-          setData([]);
-        }
+    const fetchPricing = async () => {
+      try {
+        const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_API}/pricings`);
+        const json = await res.json();
+        const pricingData = Array.isArray(json.data) ? json.data : [];
+        setData(pricingData);
+      } catch (error) {
+        console.error("Failed to fetch pricing:", error);
+        setData([]);
+      } finally {
         setLoading(false);
-      })
-      .catch((err) => {
-        setLoading(false);
-      });
+      }
+    };
+
+    fetchPricing();
   }, []);
 
   useEffect(() => {
@@ -43,62 +45,54 @@ const Pricings: React.FC = () => {
     return () => clearInterval(interval);
   }, [emblaApi]);
 
-  useEffect(() => {
-    fetch(`${process.env.NEXT_PUBLIC_BASE_API}/pricings`)
-      .then((res) => res.json())
-      .then((response) => {
-        const pricingData = response.data;
-        if (Array.isArray(pricingData)) {
-          setData(pricingData);
-        } else {
-          setData([]);
-        }
-        setLoading(false);
-      })
-      .catch((err) => {
-        setLoading(false);
-      });
-  }, []);
-
   if (loading) {
     return (
-      <div className="flex justify-center items-center py-16">
+      <div className="flex justify-center items-center">
         <LoaderCircle className="animate-spin w-8 h-8 text-primary" />
       </div>
     );
   }
 
   return (
-    <div className="flex flex-col items-center pt-12">
-      <div className="overflow-hidden w-full" ref={emblaRef}>
-        <div className="flex gap-4">
-          {data?.map((plan, index) => (
-            <div
-              key={index}
-              className="flex-shrink-0 w-[90%] sm:w-[80%] md:w-1/2 lg:w-1/4 border shadow-md p-4 rounded-md  mx-auto"
-            >
-              <div className="w-16 h-16 mx-auto rounded-full bg-primary flex items-center justify-center mb-4">
-                <span className="text-2xl font-bold text-accent">
-                  ${plan.price}
-                </span>
+    <section>
+      <SectionTitle
+        title="Flexible Pricing Plans"
+        subtitle="Choose the plan that fits your rental needs"
+      />
+
+      <div className="flex flex-col items-center">
+        <div className="overflow-hidden w-full" ref={emblaRef}>
+          <div className="flex gap-4">
+            {data?.map((plan, index) => (
+              <div
+                key={index}
+                className="flex-shrink-0 w-[90%] sm:w-[80%] md:w-1/2 lg:w-1/4 border shadow-md p-4 rounded-md mx-auto"
+              >
+                <div className="w-16 h-16 mx-auto rounded-full bg-primary flex items-center justify-center mb-4">
+                  <span className="text-2xl font-bold text-accent">
+                    ${plan.price}
+                  </span>
+                </div>
+                <h3 className="text-xl font-semibold mb-2 text-center">
+                  {plan.title}
+                </h3>
+                <p className="md:text-base text-muted-foreground text-sm mb-4 text-center">
+                  {plan.description}
+                </p>
+                <ul className="space-y-2 text-sm md:text-base text-muted-foreground">
+                  {plan.features.map((feature, idx) => (
+                    <li key={idx} className="flex items-center gap-2">
+                      <span className="text-primary font-bold">✓</span>
+                      {feature}
+                    </li>
+                  ))}
+                </ul>
               </div>
-              <h3 className="text-xl font-semibold mb-2 text-center">
-                {plan.title}
-              </h3>
-              <p className="text-gray-400 text-sm mb-4">{plan?.description}</p>
-              <ul className="space-y-2 text-sm text-gray-400">
-                {plan?.features.map((feature, idx) => (
-                  <li key={idx} className="flex items-center gap-2">
-                    <span className="text-primary font-bold">✓</span>
-                    {feature}
-                  </li>
-                ))}
-              </ul>
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
       </div>
-    </div>
+    </section>
   );
 };
 

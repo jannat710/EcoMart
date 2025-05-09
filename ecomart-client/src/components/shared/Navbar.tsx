@@ -154,9 +154,9 @@ const Navbar = () => {
             </div>
           ) : (
             <div className="flex space-x-2">
-              <Link href="/register">
+              <Link href="/login">
                 <Button variant="default" className="  cursor-pointer">
-                  Register
+                  Login
                 </Button>
               </Link>
             </div>
